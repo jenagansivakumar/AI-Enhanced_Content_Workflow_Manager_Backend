@@ -1,7 +1,10 @@
 import express  from "express";
 
+
 const app = express()
 const port = 4000
+
+app.use(express.json()); 
 
 const contentList = [
     { id: 1, title: "First Content", body: "This is the first content item" },
