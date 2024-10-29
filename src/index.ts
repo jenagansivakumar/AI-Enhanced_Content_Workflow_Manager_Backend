@@ -1,17 +1,18 @@
 import express  from "express";
 
 const app = express()
-const PORT = 4000
+const port = 4000
 
-app.get("/api/content", (req,res)=>{
-    const content = [
-        {
-            "Name": "Jena"
-        }
-    ]
-    res.json(content)
+app.get("/api/content", (req, res) =>{
+    const personData = [{
+        "ID": 34,
+        "Title": "The Holy Babu",
+        "Body": "bla bla bla "
+    }]
+    res.json(personData)
 })
 
-app.listen(PORT, ()=> {
-    console.log(`Server running on http://localhost:${PORT}`);
+
+app.listen(port, ()=>{
+    console.log(`Server is running on port ${port}`)
 })
