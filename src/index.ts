@@ -3,13 +3,24 @@ import express  from "express";
 const app = express()
 const port = 4000
 
-app.get("/api/content", (req, res) =>{
-    const personData = [{
-        "ID": 34,
-        "Title": "The Holy Babu",
-        "Body": "bla bla bla "
-    }]
-    res.json(personData)
+const contentList = [
+    { id: 1, title: "First Content", body: "This is the first content item" },
+    { id: 2, title: "Second Content", body: "This is the second content item" },
+    { id: 3, title: "Third Content", body: "This is the third content item" }
+  ];
+
+app.get("/api/content/:id", (req, res) =>{
+   const id = parseInt(req.params.id)
+   const contentItem = contentList.find((item)=> item.id === id)
+
+   if (contentItem){
+    res.json(contentItem)
+   }
+   else {
+    res.status(400).json({
+        message: "Not found"
+    })
+   }
 })
 
 
