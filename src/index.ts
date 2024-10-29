@@ -23,6 +23,16 @@ app.get("/api/content/:id", (req, res) =>{
    }
 })
 
+app.post("/api/content", (req, res)=> {
+    const {title, body} = req.body
+    const newContent = {
+        id : contentList.length + 1,
+        title,
+        body
+    }
+    contentList.push(newContent)
+    res.status(201).json(newContent)
+})
 
 app.listen(port, ()=>{
     console.log(`Server is running on port ${port}`)
