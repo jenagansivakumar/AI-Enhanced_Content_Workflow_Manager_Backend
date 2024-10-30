@@ -36,6 +36,20 @@ app.post("/api/content", (req,res)=>{
     res.status(201).json(contentList).send("Successfully created content!")
 })
 
+app.put("/api/content/:id", (req, res)=>{
+    const id = parseInt(req.params.id)
+    const {title, body, tags } = req.body
+
+    const contentItem = contentList.find((item)=> item.id === id)
+    
+    if (contentItem){
+        contentItem.title = title || contentItem.title;
+        contentItem.body = body || contentItem.body;
+        contentItem.tags = tags || contentItem.tags;
+    }
+
+
+})
 app.listen(port, ()=>{
     console.log(`Server running on port ${port}`)
 })
