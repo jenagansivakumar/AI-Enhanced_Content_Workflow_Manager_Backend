@@ -2,10 +2,10 @@
   "name": "ai-enhanced_content_workflow_manager_backend",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module", 
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev" : "nodemon src/index.ts"
-    
+    "dev": "nodemon src/index.ts"
   },
   "keywords": [],
   "author": "",
