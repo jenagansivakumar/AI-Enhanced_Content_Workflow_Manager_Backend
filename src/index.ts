@@ -31,6 +31,9 @@ app.post("/api/content", (req,res)=>{
         status: "draft",
         tags
     }
+
+    contentList.push(newContent)
+    res.status(201).json(contentList).send("Successfully created content!")
 })
 
 app.listen(port, ()=>{
