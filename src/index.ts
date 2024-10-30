@@ -18,9 +18,20 @@ const contentList: ContentItem [] = [
     {id: 2, title: "Test 2", body: "Test body 2 ", status: "draft", tags: ["test tag 2", "test tag 3"]}
 ]
 
-app.get("/", (req,res)=> {
+app.get("/api/content", (req,res)=> {
     res.send(contentList)
 } )
+
+app.post("/api/content", (req,res)=>{
+    const {title, body, tags} = req.body
+    const newContent: ContentItem = {
+        id: contentList.length + 1,
+        title,
+        body,
+        status: "draft",
+        tags
+    }
+})
 
 app.listen(port, ()=>{
     console.log(`Server running on port ${port}`)
