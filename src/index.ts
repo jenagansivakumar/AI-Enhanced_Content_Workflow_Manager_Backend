@@ -19,7 +19,7 @@ const contentList: ContentItem [] = [
 ]
 
 app.get("/", (req,res)=> {
-    res.send()
+    res.send(contentList)
 } )
 
 app.listen(port, ()=>{
