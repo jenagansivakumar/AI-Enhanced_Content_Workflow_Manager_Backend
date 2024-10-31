@@ -1,12 +1,18 @@
 import express, { Request, Response } from "express";
 import axios from "axios";
 import dotenv from "dotenv";
+import  { connectDB } from "./database";
+
 const cron = require("node-cron");
+
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
+
+connectDB();
+
 
 const port = 4000;
 
