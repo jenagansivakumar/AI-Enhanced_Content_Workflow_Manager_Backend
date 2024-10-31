@@ -9,7 +9,7 @@ dotenv.config()
 const app = express();
 app.use(express.json());
 
-const port = 4000;
+const port = 4001;
 
 interface ContentItem {
     id: number;
@@ -36,9 +36,10 @@ const contentList: ContentItem[] = [
 app.get("/api/test-key", async (req: Request, res: Response) => {
     try {
         const response = await axios.post(
-            "https://api.openai.com/v1/engines/davinci-codex/completions",
+            "https://api.openai.com/v1/chat/completions",
             {
-                prompt: "Hello, world!",
+                model: "gpt-3.5-turbo",
+                messages: [{ role: "user", content: "Hello, world!" }],
                 max_tokens: 5,
             },
             {
@@ -68,6 +69,8 @@ app.get("/api/test-key", async (req: Request, res: Response) => {
         }
     }
 });
+
+
 
 app.get("/api/content", (req: Request, res: Response) => {
     res.send(contentList);
