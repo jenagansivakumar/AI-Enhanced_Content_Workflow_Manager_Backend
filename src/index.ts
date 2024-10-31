@@ -71,22 +71,30 @@ app.put("/api/content/:id", (req, res) => {
     }
 });
 
-const recommendContentHandler: RequestHandler<{ id: string }> = (req, res) => {
+app.put("/api/content/:id", (req, res) => {
     const id = parseInt(req.params.id);
+    const { title, body, tags } = req.body;
+
     const contentItem = contentList.find((item) => item.id === id);
 
-    if (!contentItem) {
-        res.status(404).json({ message: 'Content not found' });
-    } else {
-        const recommendations = contentList.filter((item) =>
-            item.id !== contentItem.id &&
-            item.tags && contentItem.tags &&
-            item.tags.some(tag => contentItem.tags!.includes(tag))
-        );
+    if (contentItem) {
+        contentItem.title = title || contentItem.title;
+        contentItem.body = body || contentItem.body;
+        contentItem.tags = tags || contentItem.tags;
 
-        res.status(200).json({ contentItem, recommendations });
+        if (contentItem.status === "draft" && body && body.length > 100) {
+            contentItem.status = "review";
+        }
+
+        if (contentItem.status === "review" && body && body.includes("approved for publishing")) {
+            contentItem.status = "published";
+        }
+
+        res.status(200).json({ message: "Content updated successfully", contentItem });
+    } else {
+        res.status(404).json({ message: "Content item not found" });
     }
-};
+});
 
 
 
