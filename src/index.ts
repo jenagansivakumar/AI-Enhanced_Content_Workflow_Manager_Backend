@@ -1,6 +1,5 @@
-import { Request, Response, RequestHandler } from 'express';
-import express from "express";
-import cron from "node-cron";
+import express, { Request, Response } from "express";
+const cron = require("node-cron");
 
 const app = express();
 app.use(express.json());
@@ -29,12 +28,11 @@ const contentList: ContentItem[] = [
     { id: 10, title: "Mastering TypeScript", body: "Advanced TypeScript techniques", status: "published", tags: ["typescript", "advanced"] }
 ];
 
-
-app.get("/api/content", (req, res) => {
+app.get("/api/content", (req: Request, res: Response) => {
     res.send(contentList);
 });
 
-app.post("/api/content", (req, res) => {
+app.post("/api/content", (req: Request, res: Response) => {
     const { title, body, tags } = req.body;
     const newContent: ContentItem = {
         id: contentList.length + 1,
@@ -49,32 +47,7 @@ app.post("/api/content", (req, res) => {
     res.status(201).json({ message: "Successfully created content!", contentList });
 });
 
-app.put("/api/content/:id", (req, res) => {
-    const id = parseInt(req.params.id);
-    const { title, body, tags } = req.body;
-
-    const contentItem = contentList.find((item) => item.id === id);
-
-    if (contentItem) {
-        contentItem.title = title || contentItem.title;
-        contentItem.body = body || contentItem.body;
-        contentItem.tags = tags || contentItem.tags;
-
-        if (body && body.length > 100) {
-            contentItem.status = "review";
-        }
-
-        if (body && body.includes("final approval")) {
-            contentItem.status = "published";
-        }
-
-        res.status(200).json({ message: "Content updated successfully", contentItem });
-    } else {
-        res.status(404).json({ message: "Content item not found" });
-    }
-});
-
-app.put("/api/content/:id", (req, res) => {
+app.put("/api/content/:id", (req: Request, res: Response) => {
     const id = parseInt(req.params.id);
     const { title, body, tags } = req.body;
 
@@ -115,8 +88,26 @@ cron.schedule("0 0 * * *", () => {
     });
 });
 
+const handleTagRoute = (req: Request, res: Response): void => {
+    const { title, body } = req.body;
 
+    if (!body) {
+        res.status(400).json({ message: "Content body is required" });
+        return;
+    }
 
+    const tags: string[] = [];
+
+    if (title && title.toLowerCase().includes("javascript")) tags.push("javascript");
+    if (title && title.toLowerCase().includes("react")) tags.push("react");
+    if (body.toLowerCase().includes("testing")) tags.push("testing");
+    if (body.toLowerCase().includes("performance")) tags.push("performance");
+    if (body.toLowerCase().includes("advanced")) tags.push("advanced");
+
+    res.status(200).json({ tags });
+};
+
+app.post("/api/content/tag", handleTagRoute);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
