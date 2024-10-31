@@ -1,5 +1,10 @@
 import express, { Request, Response } from "express";
+import axios from "axios";
+import dotenv from "dotenv"
+
 const cron = require("node-cron");
+
+dotenv.config()
 
 const app = express();
 app.use(express.json());
@@ -27,6 +32,42 @@ const contentList: ContentItem[] = [
     { id: 9, title: "Testing Node.js APIs", body: "Guide to testing APIs with Node.js", status: "published", tags: ["nodejs", "testing"] },
     { id: 10, title: "Mastering TypeScript", body: "Advanced TypeScript techniques", status: "published", tags: ["typescript", "advanced"] }
 ];
+
+app.get("/api/test-key", async (req: Request, res: Response) => {
+    try {
+        const response = await axios.post(
+            "https://api.openai.com/v1/engines/davinci-codex/completions",
+            {
+                prompt: "Hello, world!",
+                max_tokens: 5,
+            },
+            {
+                headers: {
+                    "Authorization": `Bearer ${process.env.AI_API_KEY}`,
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+
+        res.status(200).json({
+            success: true,
+            data: response.data,
+        });
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            res.status(500).json({
+                success: false,
+                message: "Failed to connect to AI API",
+                error: error.response?.data || error.message,
+            });
+        } else {
+            res.status(500).json({
+                success: false,
+                message: "An unexpected error occurred",
+            });
+        }
+    }
+});
 
 app.get("/api/content", (req: Request, res: Response) => {
     res.send(contentList);
