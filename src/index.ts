@@ -1,5 +1,6 @@
 import { Request, Response, RequestHandler } from 'express';
 import express from "express";
+import cron from "node-cron";
 
 const app = express();
 app.use(express.json());
@@ -12,6 +13,7 @@ interface ContentItem {
     body: string;
     status: "draft" | "review" | "published";
     tags?: string[];
+    createdAt?: Date;
 }
 
 const contentList: ContentItem[] = [
@@ -39,7 +41,8 @@ app.post("/api/content", (req, res) => {
         title,
         body,
         status: "draft",
-        tags
+        tags,
+        createdAt: new Date()
     };
 
     contentList.push(newContent);
@@ -95,6 +98,23 @@ app.put("/api/content/:id", (req, res) => {
         res.status(404).json({ message: "Content item not found" });
     }
 });
+
+cron.schedule("0 0 * * *", () => {
+    const now = new Date().getTime();
+    const sevenDaysInMs = 7 * 24 * 60 * 60 * 1000;
+
+    contentList.forEach((content) => {
+        if (content.createdAt) {
+            const contentAge = now - new Date(content.createdAt).getTime();
+
+            if (content.status === "draft" && contentAge > sevenDaysInMs) {
+                content.status = "review";
+                console.log(`Content ID ${content.id} moved to review due to age.`);
+            }
+        }
+    });
+});
+
 
 
 
