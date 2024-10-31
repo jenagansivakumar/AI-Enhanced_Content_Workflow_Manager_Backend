@@ -1,15 +1,15 @@
 import express, { Request, Response } from "express";
 import axios from "axios";
-import dotenv from "dotenv"
-
+import dotenv from "dotenv";
 const cron = require("node-cron");
 
-dotenv.config()
+dotenv.config();
+
 
 const app = express();
 app.use(express.json());
 
-const port = 4001;
+const port = 4000;
 
 interface ContentItem {
     id: number;
@@ -69,8 +69,6 @@ app.get("/api/test-key", async (req: Request, res: Response) => {
         }
     }
 });
-
-
 
 app.get("/api/content", (req: Request, res: Response) => {
     res.send(contentList);
@@ -150,6 +148,47 @@ const handleTagRoute = (req: Request, res: Response): void => {
 
     res.status(200).json({ tags });
 };
+
+app.post("/api/generate-response", async (req: Request, res: Response) => {
+    const { prompt } = req.body;
+    
+    if (!prompt) {
+        res.status(400).json({ success: false, message: "Prompt is required" });
+        return;
+    }
+    
+    try {
+        const response = await axios.post(
+            "https://api.openai.com/v1/chat/completions",
+            {
+                model: "gpt-3.5-turbo",
+                messages: [{ role: "user", content: prompt }],
+                max_tokens: 100,
+            },
+            {
+                headers: {
+                    "Authorization": `Bearer ${process.env.AI_API_KEY}`,
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+
+        res.status(200).json({ success: true, message: response.data.choices[0].message.content });
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            res.status(500).json({
+                success: false,
+                message: "Failed to connect to AI API",
+                error: error.response?.data || error.message,
+            });
+        } else {
+            res.status(500).json({
+                success: false,
+                message: "An unexpected error occurred",
+            });
+        }
+    }
+});
 
 app.post("/api/content/tag", handleTagRoute);
 
