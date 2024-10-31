@@ -68,6 +68,7 @@ app.get('/api/content/recommend/:id', (req, res) => {
     if (!contentItem) {
         return res.status(404).json({ message: 'Content not found' });
     }
+    res.status(200).json({ contentItem });
 });
 
 
