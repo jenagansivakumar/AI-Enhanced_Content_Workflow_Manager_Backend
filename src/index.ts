@@ -15,9 +15,18 @@ interface ContentItem {
 }
 
 const contentList: ContentItem[] = [
-    { id: 1, title: "Test", body: "Test body", status: "draft", tags: ["test tag", "test tag2"] },
-    { id: 2, title: "Test 2", body: "Test body 2 ", status: "draft", tags: ["test tag 2", "test tag 3"] }
+    { id: 1, title: "Introduction to Testing", body: "Basics of testing", status: "draft", tags: ["testing", "basics"] },
+    { id: 2, title: "Advanced Testing", body: "Deep dive into testing techniques", status: "review", tags: ["testing", "advanced"] },
+    { id: 3, title: "JavaScript Essentials", body: "Introduction to JavaScript", status: "published", tags: ["javascript", "basics"] },
+    { id: 4, title: "JavaScript Best Practices", body: "Improving JavaScript code quality", status: "draft", tags: ["javascript", "advanced"] },
+    { id: 5, title: "React for Beginners", body: "Learn the basics of React", status: "review", tags: ["react", "basics"] },
+    { id: 6, title: "React Advanced Patterns", body: "Higher-order components and hooks", status: "published", tags: ["react", "advanced"] },
+    { id: 7, title: "Node.js Intro", body: "Server-side JavaScript basics", status: "draft", tags: ["nodejs", "basics", "javascript"] },
+    { id: 8, title: "Node.js Performance", body: "Improving Node.js performance", status: "review", tags: ["nodejs", "advanced", "performance"] },
+    { id: 9, title: "Testing Node.js APIs", body: "Guide to testing APIs with Node.js", status: "published", tags: ["nodejs", "testing"] },
+    { id: 10, title: "Mastering TypeScript", body: "Advanced TypeScript techniques", status: "published", tags: ["typescript", "advanced"] }
 ];
+
 
 app.get("/api/content", (req, res) => {
     res.send(contentList);
@@ -69,11 +78,17 @@ const recommendContentHandler: RequestHandler<{ id: string }> = (req, res) => {
     if (!contentItem) {
         res.status(404).json({ message: 'Content not found' });
     } else {
-        res.status(200).json({ contentItem });
+        const recommendations = contentList.filter((item) =>
+            item.id !== contentItem.id &&
+            item.tags && contentItem.tags &&
+            item.tags.some(tag => contentItem.tags!.includes(tag))
+        );
+
+        res.status(200).json({ contentItem, recommendations });
     }
 };
 
-
+app.get('/api/content/recommend/:id', recommendContentHandler);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
