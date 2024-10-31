@@ -61,6 +61,25 @@ app.put("/api/content/:id", (req, res) => {
     }
 });
 
+app.get('/api/content/recommend/:id', (req, res) => {
+    const id = parseInt(req.params.id)
+    const contentItem = contentList.find((item) => item.id === id);
+
+    if (!contentItem) {
+        return res.status(404).json({ message: 'Content not found' });
+    }
+
+    const { tags } = contentItem;
+    const recommendations = contentList.filter(
+        (item) =>
+            item.id !== id && item.tags?.some((tag) => tags.includes(tag))
+    );
+
+    res.status(200).json({
+        message: `Recommendations for content ID ${id}`,
+        recommendations,
+    });
+});
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
