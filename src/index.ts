@@ -5,7 +5,6 @@ const cron = require("node-cron");
 
 dotenv.config();
 
-
 const app = express();
 app.use(express.json());
 
@@ -190,7 +189,49 @@ app.post("/api/generate-response", async (req: Request, res: Response) => {
     }
 });
 
-app.post("/api/content/tag", handleTagRoute);
+app.post("/api/content/ai-tag", async (req: Request, res: Response): Promise<void> => {
+    const { title, body } = req.body;
+
+    if (!title && !body) {
+        res.status(400).json({ success: false, message: "Title or body is required for AI tagging." });
+        return;
+    }
+
+    try {
+        const response = await axios.post(
+            "https://api.openai.com/v1/chat/completions",
+            {
+                model: "gpt-3.5-turbo",
+                messages: [
+                    { role: "system", content: "You are a helpful assistant that generates relevant tags for articles." },
+                    { role: "user", content: `Generate tags for the following content:\nTitle: ${title}\nBody: ${body}` }
+                ],
+                max_tokens: 50,
+            },
+            {
+                headers: {
+                    "Authorization": `Bearer ${process.env.AI_API_KEY}`,
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+
+        const aiResponse = response.data.choices[0].message.content;
+        const tags = aiResponse.split(",").map((tag: string) => tag.trim());
+        
+        res.status(200).json({ success: true, tags });
+    } catch (error) {
+        const errorMessage = axios.isAxiosError(error) && error.response?.data 
+            ? error.response.data 
+            : "An unexpected error occurred";
+
+        res.status(500).json({
+            success: false,
+            message: "Failed to connect to AI API",
+            error: errorMessage,
+        });
+    }
+});
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
