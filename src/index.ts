@@ -88,7 +88,7 @@ const recommendContentHandler: RequestHandler<{ id: string }> = (req, res) => {
     }
 };
 
-app.get('/api/content/recommend/:id', recommendContentHandler);
+
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
