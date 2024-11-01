@@ -3,6 +3,8 @@ import axios from "axios";
 import dotenv from "dotenv";
 import  { connectDB } from "./database";
 import { addSampleContent } from "./database";
+import cors from 'cors';
+
 
 
 const cron = require("node-cron");
@@ -10,7 +12,10 @@ const cron = require("node-cron");
 
 dotenv.config();
 
+
 const app = express();
+app.use(cors());
+
 app.use(express.json());
 
 connectDB().then(() => {
