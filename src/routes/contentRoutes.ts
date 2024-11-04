@@ -1,11 +1,10 @@
-import { Router } from 'express';
-import { getAllContent, createContent, updateContent, deleteContent } from '../controllers/contentController';
 
-const router = Router();
+import express from 'express';
+import * as contentController from '../controllers/contentController';
 
-router.get('/', getAllContent);
-router.post('/', createContent);
-router.put('/:id', updateContent);
-router.delete('/:id', deleteContent);
+const router = express.Router();
+
+router.get('/content', contentController.getAllContent);  
+router.post('/content', contentController.createContent);  
 
 export default router;
