@@ -18,3 +18,12 @@ export const createContent = async (req: Request, res: Response, next: NextFunct
         next(error);
     }
 };
+
+export const deleteContent = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+      await contentService.deleteContent(req.params.id);
+      res.status(204).end();
+  } catch (error) {
+      next(error);
+  }
+};

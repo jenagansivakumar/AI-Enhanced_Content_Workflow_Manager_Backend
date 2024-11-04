@@ -11,6 +11,15 @@ import Content from './models/contentModels';
 dotenv.config();
 const app = express();
 const cron = require('node-cron');
+
+app.use(cors({ origin: 'http://localhost:3000' }));
+app.use(express.json());
+
+connectDB();
+
+app.use('/api', contentRoutes);
+app.use(errorHandler);
+
 const SEVEN_DAYS_IN_MS = 7 * 24 * 60 * 60 * 1000;
 
 cron.schedule('0 0 * * *', async () => {
@@ -32,15 +41,6 @@ cron.schedule('0 0 * * *', async () => {
         console.error('Error in scheduled task:', error);
     }
 });
-
-app.use(cors({ origin: 'http://localhost:3000' }));
-app.use(express.json());
-
-connectDB();
-
-app.use('/api', contentRoutes);
-app.use(errorHandler);
-
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

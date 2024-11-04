@@ -10,6 +10,9 @@ export async function createContent(data: ContentData) {
     return await newContent.save();
 }
 
+export const deleteContent = async (id: string) => {
+    return await Content.findByIdAndDelete(id);
+};
 
 export async function fetchAllContent() {
     try {
