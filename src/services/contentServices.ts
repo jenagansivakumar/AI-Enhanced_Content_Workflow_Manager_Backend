@@ -16,7 +16,7 @@ export const deleteContent = async (id: string) => {
 
 export async function fetchAllContent() {
     try {
-        return await Content.find();  
+        return await Content.find();
     } catch (error) {
         throw new Error("Failed to fetch content");
     }
