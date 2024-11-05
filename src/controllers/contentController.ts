@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import * as contentService from '../services/contentServices';
-import Content from '../models/contentModels'; // Ensure Content model is imported
+import Content from '../models/contentModels'; 
 import axios from 'axios';
 
 const AI_API_KEY = process.env.AI_API_KEY;
@@ -71,6 +71,8 @@ export const createContent = async (req: Request, res: Response, next: NextFunct
         const tags = await generateTagsWithAIHelper(req.body.title, req.body.body);
         const newContent = new Content({ ...req.body, tags });
         const savedContent = await newContent.save();
+
+        console.log("Saved content with tags:", savedContent); 
         res.status(201).json(savedContent);
     } catch (error) {
         next(error);

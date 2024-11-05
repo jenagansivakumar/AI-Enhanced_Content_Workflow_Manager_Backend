@@ -1,8 +1,11 @@
 import axios from 'axios';
 import Content from '../models/contentModels';
 import { ContentData } from '../types/ContentItem';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const AI_API_KEY = process.env.AI_API_KEY;
+console.log(AI_API_KEY)
 
 export async function createContent(data: ContentData) {
     const tags = await generateTagsWithAI(data.title, data.body);
@@ -36,16 +39,20 @@ async function generateTagsWithAI(title: string, body: string): Promise<string[]
             },
             {
                 headers: {
-                    'Authorization': `Bearer ${AI_API_KEY}`,
+                    Authorization: `Bearer ${AI_API_KEY}`,
                     'Content-Type': 'application/json',
                 },
             }
         );
 
         const aiResponse = response.data.choices[0].message.content;
-        return aiResponse.split(',').map((tag: string) => tag.trim());
+        const tags = aiResponse.split(',').map((tag: string) => tag.trim());
+
+        console.log("AI generated tags:", tags); 
+        return tags;
     } catch (error) {
         console.error("Error generating AI tags:", error);
         return [];
     }
 }
+
