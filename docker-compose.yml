@@ -1,8 +1,8 @@
-version: '3.8'  
+version: '3.8'
 
 services:
   backend:
-    build: ./backend  
+    build: .
     ports:
       - "4000:4000"  
     environment:
@@ -18,6 +18,13 @@ services:
       - "27017:27017" 
     volumes:
       - mongo_data:/data/db  
+
+  frontend:
+    build: /Users/jenagansivakumar/Documents/Projects/ai-enhanced_content_workflow_manager/ai-enhanced_content_workflow_manager_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_BACKEND_URL=http://localhost:4000
 
 volumes:
   mongo_data:
